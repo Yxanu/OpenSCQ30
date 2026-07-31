@@ -11,7 +11,10 @@ workspace = true
 
 [features]
 default = []
-bundled-dependencies = ["openscq30-lib/bundled-dependencies"]
+bundled-dependencies = [
+    "openscq30-lib/bundled-dependencies",
+    "rust-embed/debug-embed",
+]
 
 [dependencies]
 tokio = { workspace = true, features = ["fs"] }
