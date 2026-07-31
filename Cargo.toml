@@ -114,6 +114,7 @@ open = "5"
 proptest = { version = "1.0.0", default-features = false }
 proptest-derive = "0.8"
 embed-resource = "3"
+cc = "1"
 pathfinding = "4"
 palette = "0.7"
 

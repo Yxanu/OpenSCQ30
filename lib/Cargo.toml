@@ -63,6 +63,9 @@ windows = { workspace = true, features = [
     "Networking_Sockets",
 ] }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+
 [target.'cfg(target_os = "android")'.dependencies]
 rusqlite = { workspace = true, features = ["bundled"] }
 rust-embed = { workspace = true, features = ["debug-embed"] }
@@ -71,3 +74,6 @@ rust-embed = { workspace = true, features = ["debug-embed"] }
 tokio = { workspace = true, features = ["macros", "test-util"] }
 proptest = { workspace = true, default-features = false, features = ["std"] }
 proptest-derive = { workspace = true }
+
+[build-dependencies]
+cc = { workspace = true }
