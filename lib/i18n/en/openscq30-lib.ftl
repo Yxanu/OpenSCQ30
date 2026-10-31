@@ -1,4 +1,5 @@
 soundcore-a3004 = Soundcore Q20I
+soundcore-a3005 = Soundcore Q11i
 soundcore-a3027 = Soundcore Life Q35
 soundcore-a3028 = Soundcore Q30 / Life Q30
 soundcore-a3029 = Soundcore Life Tune
@@ -9,6 +10,8 @@ soundcore-a3035 = Soundcore Space One
 soundcore-a3040 = Soundcore Space Q45
 soundcore-a3062 = Soundcore Space One Pro
 soundcore-a3116 = Soundcore Motion+
+soundcore-a3330 = Soundcore C30i
+soundcore-a3388 = Soundcore AeroClip
 soundcore-a3876 = Soundcore V20i
 soundcore-a3909 = Soundcore Liberty 2 Pro
 soundcore-a3926 = Soundcore Life Dot 2S
@@ -16,12 +19,14 @@ soundcore-a3930 = Soundcore Liberty 2 Pro+
 soundcore-a3931 = Soundcore Life Dot 2 NC
 soundcore-a3933 = Soundcore Life Note 3
 soundcore-a3936 = Soundcore Space A40
+soundcore-a3944 = Soundcore Life P2 Mini
 soundcore-a3945 = Soundcore Life Note 3S
 soundcore-a3947 = Soundcore Liberty 4 NC
 soundcore-a3948 = Soundcore A20i
 soundcore-a3949 = Soundcore P20i / P25i / R50i
 soundcore-a3951 = Soundcore Liberty Air 2 Pro
 soundcore-a3952 = Soundcore Liberty 3 Pro
+soundcore-a3953 = Soundcore Liberty 4
 soundcore-a3939 = Soundcore Life P3
 soundcore-a3935 = Soundcore Life A2 NC
 soundcore-a3959 = Soundcore P30i / R50i NC
@@ -32,6 +37,8 @@ soundcore-a3957 = Soundcore Liberty 5
 soundcore-d1101 = Soundcore C50i
 soundcore-d1202 = Soundcore P31i
 soundcore-d1202c = Soundcore R60i NC
+soundcore-d1301 = Soundcore Sleep A30
+soundcore-d1402 = Soundcore Space 2
 soundcore-development = Soundcore Development Information
 
 general = General
@@ -142,12 +149,17 @@ right-triple-press = Right Triple Press
 right-long-press = Right Long Press
 right-slide-up = Right Slide Up
 right-slide-down = Right Slide Down
+mfb-long-press = MFB Long Press
 volume-up = Volume Up
 volume-down = Volume Down
 previous-song = Previous Song
 next-song = Next Song
 voice-assistant = Voice Assistant
+system-voice-assistant = System Voice Assistant
+anka-voice-assistant = Anka Voice Assistant
 play-pause = Play Pause
+ai-translation = AI Translation
+nap-mode = Nap Mode
 normal-mode-in-cycle = Normal Mode in Cycle
 transparency-mode-in-cycle = Transparency Mode in Cycle
 noise-canceling-mode-in-cycle = Noise Canceling Mode in Cycle
@@ -203,6 +215,8 @@ wearing-tone = Wearing Tone
 touch-lock = Touch Lock
 low-battery-prompt = Low Battery Prompt
 wearing-detection = Wearing Detection
+press-sensitivity = Press Sensitivity
+ambient-sound-prompt = Ambient Sound Prompt
 voice-prompt = Voice Prompt
 side-tone = Side Tone
 dolby-audio = Dolby Audio
@@ -262,3 +276,58 @@ light-on = Light On
 breathing = Breathing
 flash = Flash
 music-follows = Music Follows
+
+bluetooth = Bluetooth
+local = Local
+
+nature = Nature
+glow = Glow
+rhythm = Rhythm
+bloom = Bloom
+
+sunday = Sunday
+monday = Monday
+tuesday = Tuesday
+wednesday = Wednesday
+thursday = Thursday
+friday = Friday
+saturday = Saturday
+
+change-mode = Change Mode
+
+auto-power-off-prompt = Auto Power Off Prompt
+listening-mode-prompt = Listening Mode Prompt
+incoming-calls-during-bluetooth-mode = Incoming Calls During Bluetooth Mode
+noise-canceling-prompt = Noise Canceling Prompt
+
+auto-stop-timer = Auto Stop Timer
+auto-stop-timer-duration = Auto Stop Timer Duration
+auto-switch-once-asleep = Auto-Switch Once Asleep
+keep-audio = Keep Audio
+pause-audio = Pause Audio
+play-local-audio = Play Local Audio, ANC Off
+
+alarms = Alarms
+
+listening-mode = Listening Mode
+default-listening-mode = Default Listening Mode
+
+decline-call = Decline Call
+answer-call = Answer Call
+left-double-press-during-call = Left Double Press (During Call)
+right-double-press-during-call = Right Double Press (During Call)
+left-long-press-during-call = Left Long Press (During Call)
+right-long-press-during-call = Right Long Press (During Call)
+
+create-alarm = Create Alarm
+delete-alarm-n = Delete Alarm { $number }
+alarm-n-enabled = Alarm { $number } Enabled
+alarm-n-time = Alarm { $number } Time
+alarm-n-repeat = Alarm { $number } Repeat
+alarm-n-wake-up-tune = Alarm { $number } Wake Up Tune
+alarm-n-volume = Alarm { $number } Volume
+alarm-n-snooze-duration-minutes = Alarm { $number } Snooze Duration (minutes)
+
+both-earbuds-must-be-connected = Both earbuds must be connected.
+
+hey-anka-wake-word = "Hey Anka" Wake Word

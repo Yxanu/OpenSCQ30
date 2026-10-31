@@ -45,6 +45,7 @@ pub enum CategoryId {
     DualConnections,
     Case,
     Lights,
+    Alarms,
 }
 
 #[derive(
@@ -80,6 +81,7 @@ pub enum SettingId {
     VolumeAdjustments,
     SinglePress,
     DoublePress,
+    MfbLongPress,
     LeftSinglePress,
     LeftDoublePress,
     LeftTriplePress,
@@ -92,6 +94,10 @@ pub enum SettingId {
     RightLongPress,
     RightSlideUp,
     RightSlideDown,
+    LeftDoublePressDuringCall,
+    RightDoublePressDuringCall,
+    LeftLongPressDuringCall,
+    RightLongPressDuringCall,
     NormalModeInCycle,
     TransparencyModeInCycle,
     NoiseCancelingModeInCycle,
@@ -139,6 +145,8 @@ pub enum SettingId {
     TouchLock,
     LowBatteryPrompt,
     WearingDetection,
+    PressSensitivity,
+    AmbientSoundPrompt,
     Volume,
     VoicePrompt,
     AncPersonalizedToEarCanal,
@@ -169,6 +177,95 @@ pub enum SettingId {
     LightsMode,
     AutoLightsOffMinutes,
     ButtonsEnabled,
+    AutoPowerOffPrompt,
+    ListeningModePrompt,
+    NoiseCanceling,
+    IncomingCallsDuringBluetoothMode,
+    NoiseCancelingPrompt,
+    AutoStopTimer,
+    AutoStopTimerDuration,
+    AutoSwitchOnceAsleep,
+    ListeningMode,
+    DefaultListeningMode,
+    CreateAlarm,
+    // Ideally the variants below would be generated with a macro, but a declarative macro can't be
+    // used to generate enum variants, so it would require something more complicated
+    // Alarm 1
+    #[translate("delete-alarm-n", number = 1)]
+    DeleteAlarm1,
+    #[translate("alarm-n-enabled", number = 1)]
+    Alarm1Enabled,
+    #[translate("alarm-n-time", number = 1)]
+    Alarm1Time,
+    #[translate("alarm-n-repeat", number = 1)]
+    Alarm1Repeat,
+    #[translate("alarm-n-wake-up-tune", number = 1)]
+    Alarm1WakeUpTune,
+    #[translate("alarm-n-volume", number = 1)]
+    Alarm1Volume,
+    #[translate("alarm-n-snooze-duration-minutes", number = 1)]
+    Alarm1SnoozeDuration,
+    // Alarm 2
+    #[translate("delete-alarm-n", number = 2)]
+    DeleteAlarm2,
+    #[translate("alarm-n-enabled", number = 2)]
+    Alarm2Enabled,
+    #[translate("alarm-n-time", number = 2)]
+    Alarm2Time,
+    #[translate("alarm-n-repeat", number = 2)]
+    Alarm2Repeat,
+    #[translate("alarm-n-wake-up-tune", number = 2)]
+    Alarm2WakeUpTune,
+    #[translate("alarm-n-volume", number = 2)]
+    Alarm2Volume,
+    #[translate("alarm-n-snooze-duration-minutes", number = 2)]
+    Alarm2SnoozeDuration,
+    // Alarm 3
+    #[translate("delete-alarm-n", number = 3)]
+    DeleteAlarm3,
+    #[translate("alarm-n-enabled", number = 3)]
+    Alarm3Enabled,
+    #[translate("alarm-n-time", number = 3)]
+    Alarm3Time,
+    #[translate("alarm-n-repeat", number = 3)]
+    Alarm3Repeat,
+    #[translate("alarm-n-wake-up-tune", number = 3)]
+    Alarm3WakeUpTune,
+    #[translate("alarm-n-volume", number = 3)]
+    Alarm3Volume,
+    #[translate("alarm-n-snooze-duration-minutes", number = 3)]
+    Alarm3SnoozeDuration,
+    // Alarm 4
+    #[translate("delete-alarm-n", number = 4)]
+    DeleteAlarm4,
+    #[translate("alarm-n-enabled", number = 4)]
+    Alarm4Enabled,
+    #[translate("alarm-n-time", number = 4)]
+    Alarm4Time,
+    #[translate("alarm-n-repeat", number = 4)]
+    Alarm4Repeat,
+    #[translate("alarm-n-wake-up-tune", number = 4)]
+    Alarm4WakeUpTune,
+    #[translate("alarm-n-volume", number = 4)]
+    Alarm4Volume,
+    #[translate("alarm-n-snooze-duration-minutes", number = 4)]
+    Alarm4SnoozeDuration,
+    // Alarm 5
+    #[translate("delete-alarm-n", number = 5)]
+    DeleteAlarm5,
+    #[translate("alarm-n-enabled", number = 5)]
+    Alarm5Enabled,
+    #[translate("alarm-n-time", number = 5)]
+    Alarm5Time,
+    #[translate("alarm-n-repeat", number = 5)]
+    Alarm5Repeat,
+    #[translate("alarm-n-wake-up-tune", number = 5)]
+    Alarm5WakeUpTune,
+    #[translate("alarm-n-volume", number = 5)]
+    Alarm5Volume,
+    #[translate("alarm-n-snooze-duration-minutes", number = 5)]
+    Alarm5SnoozeDuration,
+    HeyAnkaWakeWord,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -232,6 +329,9 @@ pub enum Setting {
         hue: f32,
     },
     Action,
+    TimeOfDay {
+        minutes_after_midnight: i32,
+    },
 }
 
 impl From<Setting> for Value {
@@ -253,6 +353,9 @@ impl From<Setting> for Value {
             Setting::ImportString { .. } => Cow::from("").into(),
             Setting::HueColorPicker { hue } => hue.into(),
             Setting::Action => Self::Bool(false),
+            Setting::TimeOfDay {
+                minutes_after_midnight: minutes_since_midnight,
+            } => Self::I32(minutes_since_midnight),
         }
     }
 }
@@ -310,6 +413,7 @@ impl Setting {
             Self::ImportString { .. } => SettingMode::WriteOnly,
             Self::HueColorPicker { .. } => SettingMode::ReadWrite,
             Self::Action { .. } => SettingMode::WriteOnly,
+            Self::TimeOfDay { .. } => SettingMode::ReadWrite,
         }
     }
 }

@@ -1,33 +1,23 @@
 use std::iter;
 
-use async_trait::async_trait;
 use nom::{
     IResult, Parser,
     bytes::complete::take,
     combinator::map,
     error::{ContextError, ParseError, context},
 };
-use tokio::sync::watch;
 
-use crate::{
-    device,
-    devices::soundcore::{
-        a3947::{self, state::A3947State},
-        common::{
-            modules::ModuleCollection,
-            packet::{
-                self,
-                inbound::{FromPacketBody, TryToPacket},
-                outbound::ToPacket,
-            },
-            packet_manager::PacketHandler,
-            structures::{
-                AmbientSoundModeCycle, AutoPlayPause, AutoPowerOff, CaseBatteryLevel,
-                CommonEqualizerConfiguration, DualBattery, DualFirmwareVersion, GamingMode,
-                LimitHighVolume, LowBatteryPrompt, SerialNumber, SoundLeakCompensation,
-                SurroundSound, TouchLock, TouchTone, TwsStatus, WearingTone,
-                button_configuration::ButtonStatusCollection,
-            },
+use crate::devices::soundcore::{
+    a3947::{self, state::A3947State},
+    common::{
+        macros::state_update_packet_module,
+        packet::{self, inbound::FromPacketBody, outbound::ToPacket, parsing::take_bool},
+        structures::{
+            AmbientSoundModeCycle, AutoPlayPause, AutoPowerOff, CaseBatteryLevel,
+            CommonEqualizerConfiguration, DualBattery, DualFirmwareVersion, GamingMode,
+            LimitHighVolume, LowBatteryPrompt, SerialNumber, SoundLeakCompensation, SurroundSound,
+            TouchLock, TouchTone, TwsStatus, WearingTone,
+            button_configuration::ButtonStatusCollection,
         },
     },
 };
@@ -48,6 +38,7 @@ pub struct A3947StateUpdatePacket {
     pub gaming_mode: GamingMode,
     pub touch_tone: TouchTone,
     pub surround_sound: SurroundSound,
+    pub dual_connections_enabled: bool,
     pub limit_high_volume: LimitHighVolume,
     pub auto_play_pause: AutoPlayPause,
     pub wearing_tone: WearingTone,
@@ -79,6 +70,7 @@ impl Default for A3947StateUpdatePacket {
             touch_lock: Default::default(),
             low_battery_prompt: Default::default(),
             surround_sound: Default::default(),
+            dual_connections_enabled: Default::default(),
         }
     }
 }
@@ -115,10 +107,11 @@ impl FromPacketBody for A3947StateUpdatePacket {
                         take(1usize),                // unknown
                         GamingMode::take,
                         TouchTone::take,
-                        take(3usize),        // unknown
-                        SurroundSound::take, // 3d surround sound
+                        take(2usize), // unknown
+                        take_bool,
                     ),
                     (
+                        SurroundSound::take, // 3d surround sound
                         LimitHighVolume::take,
                         AutoPlayPause::take, // auto play/pause
                         WearingTone::take,   // wearing tone
@@ -149,9 +142,10 @@ impl FromPacketBody for A3947StateUpdatePacket {
                         gaming_mode,
                         touch_tone,
                         _unknown7,
-                        surround_sound,
+                        dual_connections_enabled,
                     ),
                     (
+                        surround_sound,
                         limit_high_volume,
                         auto_play_pause,
                         wearing_tone,
@@ -174,6 +168,7 @@ impl FromPacketBody for A3947StateUpdatePacket {
                         sound_modes,
                         sound_leak_compensation,
                         gaming_mode,
+                        dual_connections_enabled,
                         surround_sound,
                         limit_high_volume,
                         auto_play_pause,
@@ -233,29 +228,7 @@ impl ToPacket for A3947StateUpdatePacket {
     }
 }
 
-struct StateUpdatePacketHandler;
-
-#[async_trait]
-impl PacketHandler<A3947State> for StateUpdatePacketHandler {
-    async fn handle_packet(
-        &self,
-        state: &watch::Sender<A3947State>,
-        packet: &packet::Inbound,
-    ) -> device::Result<()> {
-        let packet: A3947StateUpdatePacket = packet.try_to_packet()?;
-        state.send_modify(|state| *state = packet.into());
-        Ok(())
-    }
-}
-
-impl ModuleCollection<A3947State> {
-    pub fn add_state_update(&mut self) {
-        self.packet_handlers.set_handler(
-            packet::inbound::STATE_COMMAND,
-            Box::new(StateUpdatePacketHandler {}),
-        );
-    }
-}
+state_update_packet_module!(A3947State, A3947StateUpdatePacket);
 
 #[cfg(test)]
 mod tests {

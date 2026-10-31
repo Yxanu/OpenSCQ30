@@ -1,14 +1,14 @@
 use openscq30_lib_macros::Has;
 
 use crate::devices::soundcore::{
-    a3959::{self, packets::inbound::A3959StateUpdate},
+    a3959::{self, packets::inbound::A3959StateUpdatePacket},
     common::{
         modules::reset_button_configuration::ResetButtonConfigurationPending,
         state::Update,
         structures::{
             AmbientSoundModeCycle, AutoPowerOff, CommonEqualizerConfiguration, DualBattery,
             DualConnections, DualConnectionsDevice, DualFirmwareVersion, GamingMode,
-            LowBatteryPrompt, SerialNumber, TouchTone, TwsStatus,
+            LowBatteryPrompt, SerialNumber, SurroundSound, TouchTone, TwsStatus,
             button_configuration::ButtonStatusCollection,
         },
     },
@@ -27,6 +27,7 @@ pub struct A3959State {
     auto_power_off: AutoPowerOff,
     touch_tone: TouchTone,
     low_battery_prompt: LowBatteryPrompt,
+    surround_sound: SurroundSound,
     dual_connections: DualConnections,
     #[has(maybe)]
     gaming_mode: Option<GamingMode>,
@@ -35,7 +36,7 @@ pub struct A3959State {
 
 impl A3959State {
     pub fn new(
-        packet: a3959::packets::inbound::A3959StateUpdate,
+        packet: a3959::packets::inbound::A3959StateUpdatePacket,
         dual_connections_devices: Vec<DualConnectionsDevice>,
     ) -> Self {
         Self {
@@ -50,6 +51,7 @@ impl A3959State {
             auto_power_off: packet.auto_power_off,
             touch_tone: packet.touch_tone,
             low_battery_prompt: packet.low_battery_prompt,
+            surround_sound: packet.surround_sound,
             gaming_mode: packet.gaming_mode,
             dual_connections: DualConnections {
                 is_enabled: packet.dual_connections_enabled,
@@ -60,9 +62,9 @@ impl A3959State {
     }
 }
 
-impl Update<A3959StateUpdate> for A3959State {
-    fn update(&mut self, partial: A3959StateUpdate) {
-        let A3959StateUpdate {
+impl Update<A3959StateUpdatePacket> for A3959State {
+    fn update(&mut self, partial: A3959StateUpdatePacket) {
+        let A3959StateUpdatePacket {
             tws_status,
             dual_battery,
             dual_firmware_version,
@@ -74,6 +76,7 @@ impl Update<A3959StateUpdate> for A3959State {
             touch_tone,
             auto_power_off,
             low_battery_prompt,
+            surround_sound,
             gaming_mode,
             dual_connections_enabled,
         } = partial;
@@ -88,6 +91,7 @@ impl Update<A3959StateUpdate> for A3959State {
         self.touch_tone = touch_tone;
         self.auto_power_off = auto_power_off;
         self.low_battery_prompt = low_battery_prompt;
+        self.surround_sound = surround_sound;
         self.gaming_mode = gaming_mode;
         self.dual_connections.is_enabled = dual_connections_enabled;
     }
