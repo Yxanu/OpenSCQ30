@@ -17,7 +17,9 @@ jobs:
       - name: Install just
         run: sudo snap install just --classic
       - name: Install rust
-        run: rustup install stable
+        # Install the pinned toolchain once before just starts parallel checks.
+        # Otherwise concurrent cargo proxies race while auto-installing Rust.
+        run: rustup show active-toolchain
       - name: Install ktlint
         run: |
           curl --silent --show-error --remote-name-all --location https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint{,.asc}
