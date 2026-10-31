@@ -8,6 +8,8 @@
 - Verify with `cargo fmt --all -- --check`,
   `cargo test --locked -p openscq30-lib --lib --features bundled-dependencies`
   and `cargo check --locked -p openscq30-cli --features bundled-dependencies`.
+  Use the repository-pinned Rust toolchain; keep `rust-toolchain.toml` aligned
+  with upstream's `.build-tool-versions` when synchronizing.
 - Use `script/build_and_run.sh` for the native GUI. Keep temporary, clean
   bundle staging and strict signature verification. `--package-only` must not
   launch an app or touch Bluetooth.

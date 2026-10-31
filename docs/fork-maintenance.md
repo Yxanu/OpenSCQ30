@@ -26,6 +26,11 @@ workflow artifact, not a notarized release. Existing upstream Linux/Windows/
 Android workflows are retained. Dependabot proposes Actions updates weekly;
 updates are reviewed, not automatically merged.
 
+`rust-toolchain.toml` pins Rust/rustfmt to the upstream `.build-tool-versions`
+version (1.99.1 at synchronization). Keep those versions aligned when updating
+upstream. This prevents local and CI formatting from silently using different
+stable releases; it does not change a developer's global Rust default.
+
 ## Local checks
 
 ```shell

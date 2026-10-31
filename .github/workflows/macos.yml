@@ -28,14 +28,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Install Rust
-        run: rustup toolchain install stable --profile minimal --component rustfmt
+        run: rustup show active-toolchain
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: Check Rust formatting
-        run: cargo +stable fmt --all -- --check
+        run: cargo fmt --all -- --check
       - name: Test core and macOS backend (offline fixtures, no hardware)
-        run: cargo +stable test --locked -p openscq30-lib --lib --features bundled-dependencies
+        run: cargo test --locked -p openscq30-lib --lib --features bundled-dependencies
       - name: Check CLI
-        run: cargo +stable check --locked -p openscq30-cli --features bundled-dependencies
+        run: cargo check --locked -p openscq30-cli --features bundled-dependencies
       - name: Check shell entrypoints
         run: bash -n script/build_and_run.sh script/smoke_test_device.sh
 
@@ -49,7 +49,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install Rust
-        run: rustup toolchain install stable --profile minimal
+        run: rustup show active-toolchain
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: Build and verify development archive
         run: ./script/build_and_run.sh --package-only

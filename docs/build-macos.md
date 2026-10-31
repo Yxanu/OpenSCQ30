@@ -11,7 +11,7 @@ attributed to this Rust backend. See [fork maintenance](fork-maintenance.md).
 
 - macOS 13 or newer
 - Xcode Command Line Tools (`xcode-select --install`)
-- current stable Rust from [rustup](https://rustup.rs/)
+- [rustup](https://rustup.rs/); the repository selects Rust 1.99.1 via `rust-toolchain.toml`
 - a Soundcore device already paired and connected in macOS Bluetooth settings
 
 The Soundcore mobile app should be fully closed while OpenSCQ30 connects. Many Soundcore devices accept only one settings connection at a time.
