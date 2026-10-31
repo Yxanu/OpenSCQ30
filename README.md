@@ -1,13 +1,23 @@
+> **Experimental macOS fork:** [Yxanu/OpenSCQ30](https://github.com/Yxanu/OpenSCQ30),
+> based on [Oppzippy/OpenSCQ30](https://github.com/Oppzippy/OpenSCQ30).
+> Adds a native IOBluetooth RFCOMM backend and macOS app packaging. The port's
+> live Liberty 5 connection is **not yet verified**; a passing build is not
+> evidence of working device control. For the tested native Liberty 5 app, see
+> [Yxanu/soundcorebridge](https://github.com/Yxanu/soundcorebridge).
+> [macOS build instructions](docs/build-macos.md) · [fork maintenance](docs/fork-maintenance.md)
+
+[![macOS](https://github.com/Yxanu/OpenSCQ30/actions/workflows/macos.yml/badge.svg)](https://github.com/Yxanu/OpenSCQ30/actions/workflows/macos.yml)
+
 ## About
 
 OpenSCQ30 is free software for controlling settings for Soundcore headphones and earbuds. It was originally intended for the Soundcore Life Q30, after which the project was named, but a range of devices are now supported.
 
 ### Supported Platforms
 
-[x] Windows - Ready  
-[x] Linux - Ready  
-[x] Android - Ready
-[~] macOS - Experimental (native IOBluetooth backend)
+- [x] Windows - Ready
+- [x] Linux - Ready
+- [x] Android - Ready
+- [ ] macOS - Experimental (native IOBluetooth backend)
 
 ### Supported Devices
 
@@ -59,14 +69,27 @@ If there's a device not in this list that you want to see supported, check if th
 
 ## Installing
 
-See [GitHub Releases](https://github.com/Oppzippy/OpenSCQ30/releases). All files are signed with [my GPG key](https://kylescheuing.com/publickey.txt).
+For this fork's experimental macOS app, build from source:
+
+```shell
+git clone https://github.com/Yxanu/OpenSCQ30.git
+cd OpenSCQ30
+./script/build_and_run.sh
+```
+
+The generated macOS ZIP is a local ad-hoc-signed development build, not an
+Apple-notarized release. It is not included in upstream releases.
+
+For upstream Linux, Windows and Android releases, see
+[Oppzippy/OpenSCQ30 Releases](https://github.com/Oppzippy/OpenSCQ30/releases).
+Those files are signed with [the upstream author's GPG key](https://kylescheuing.com/publickey.txt).
 
 [![Flathub](https://img.shields.io/flathub/v/com.oppzippy.OpenSCQ30)](https://flathub.org/apps/com.oppzippy.OpenSCQ30)
 [![IzzyOnDroid](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.oppzippy.openscq30)](https://apt.izzysoft.de/fdroid/index/apk/com.oppzippy.openscq30)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/openscq30.svg)](https://repology.org/project/openscq30/versions)
 
-## Mirrors
+## Upstream mirrors
 
 Issues and pull requests are accepted on both GitHub and Codeberg, although CI and releases are only on github.
 
@@ -77,7 +100,9 @@ Issues and pull requests are accepted on both GitHub and Codeberg, although CI a
 
 ### Code
 
-See [docs/development.md](docs/development.md)
+See [docs/development.md](docs/development.md) and this fork's
+[maintenance guide](docs/fork-maintenance.md). File macOS-fork issues at
+[Yxanu/OpenSCQ30](https://github.com/Yxanu/OpenSCQ30/issues).
 
 ### Translations
 

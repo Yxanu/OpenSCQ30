@@ -2,6 +2,11 @@
 
 macOS support is experimental. This fork adds a native Classic Bluetooth RFCOMM backend using Apple's `IOBluetooth` framework and packages the existing desktop GUI as a normal `.app` bundle.
 
+The current Rust port has not completed a successful live Liberty 5 control
+test. The native Swift app in [Yxanu/soundcorebridge](https://github.com/Yxanu/soundcorebridge)
+has separately verified listening modes and EQ; those results must not be
+attributed to this Rust backend. See [fork maintenance](fork-maintenance.md).
+
 ## Requirements
 
 - macOS 13 or newer
@@ -17,7 +22,12 @@ The Soundcore mobile app should be fully closed while OpenSCQ30 connects. Many S
 ./script/build_and_run.sh
 ```
 
-The script builds the existing `openscq30-gui`, embeds its runtime resources, stages `build-output/OpenSCQ30.app`, ad-hoc signs it for local use, and launches it. It also creates the portable `build-output/OpenSCQ30-macOS.zip`. The app bundle includes the Bluetooth privacy descriptions required by macOS.
+The script builds the existing `openscq30-gui`, embeds its runtime resources,
+stages a clean temporary `OpenSCQ30.app`, ad-hoc signs and verifies it, and
+launches it. It creates the portable `build-output/OpenSCQ30-macOS.zip` from
+that exact clean bundle. Temporary staging avoids File Provider attaching
+FinderInfo and invalidating signatures under synced folders. The bundle includes
+the Bluetooth privacy descriptions required by macOS.
 
 Useful modes:
 
@@ -25,6 +35,7 @@ Useful modes:
 ./script/build_and_run.sh --verify
 ./script/build_and_run.sh --debug
 ./script/build_and_run.sh --logs
+./script/build_and_run.sh --package-only
 OPENSCQ30_BUILD_PROFILE=release ./script/build_and_run.sh
 ```
 
@@ -56,11 +67,17 @@ On some recent macOS versions, `openRFCOMMChannelSync` can fail with `kIOReturnE
 
 ## Fork maintenance and distribution
 
-Keep the original project as the `upstream` remote and make macOS work in focused commits so it can be rebased cleanly:
+Keep the original project as the `upstream` remote and use a maintenance branch
+to synchronize without rewriting published fork history:
 
 ```shell
 git fetch upstream
-git rebase upstream/master
+git switch -c maintenance/upstream-sync master
+git merge upstream/master
+cargo test --locked -p openscq30-lib --lib --features bundled-dependencies
 ```
 
-The local bundle is ad-hoc signed. A public `.dmg` release still needs a Developer ID signature, hardened runtime, notarization, release CI, and testing on supported macOS versions.
+The local bundle is ad-hoc signed, not Developer ID-signed or notarized. An
+Apple-notarized public release needs Developer ID signing, hardened runtime,
+notarization and supported-macOS testing. No public macOS release is implied by
+the upstream release tags inherited by this fork.

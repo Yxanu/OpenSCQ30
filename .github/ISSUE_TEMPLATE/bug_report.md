@@ -9,7 +9,7 @@ assignees: ""
 <!-- Feel free to remove any irrelevant sections -->
 
 **Operating System**
-Windows/Linux/Android
+Windows/Linux/Android/macOS (experimental fork)
 
 **Version**
 Version and installation method, for example: vX.X.X from flathub
@@ -30,3 +30,8 @@ Steps to reproduce the behavior:
 
 **Additional context**
 Add any other context about the problem here.
+
+For macOS reports, include the macOS version, CPU architecture, commit and
+whether failure happens during build, app launch, discovery or RFCOMM open.
+Do not attach raw Bluetooth captures, serial numbers, device addresses, private
+device names, HearID calibration, databases, credentials or private signing keys.

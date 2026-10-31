@@ -1,0 +1,60 @@
+name: macOS
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      package_gui:
+        description: Also build and package the experimental GUI (no Bluetooth test)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: macOS backend tests and CLI check
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - name: Check Rust formatting
+        run: cargo +stable fmt --all -- --check
+      - name: Test core and macOS backend (offline fixtures, no hardware)
+        run: cargo +stable test --locked -p openscq30-lib --lib --features bundled-dependencies
+      - name: Check CLI
+        run: cargo +stable check --locked -p openscq30-cli --features bundled-dependencies
+      - name: Check shell entrypoints
+        run: bash -n script/build_and_run.sh script/smoke_test_device.sh
+
+  package:
+    name: Experimental GUI archive (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.package_gui
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - name: Build and verify development archive
+        run: ./script/build_and_run.sh --package-only
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: OpenSCQ30-macOS-development
+          path: build-output/OpenSCQ30-macOS.zip
+          if-no-files-found: error

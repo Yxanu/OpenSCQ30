@@ -9,3 +9,14 @@
 /build-output
 .vscode
 .cargo
+
+# Private runtime data and local hardware diagnostics.
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+*.sqlite
+*.sqlite-*
+/captures
+/support-report*.txt
