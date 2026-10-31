@@ -78,12 +78,7 @@ impl RfcommBackend for MacosRfcommBackend {
         let (connection_status_sender, connection_status_receiver) =
             watch::channel(ConnectionStatus::Connected);
         let native = tokio::task::spawn_blocking(move || {
-            NativeConnection::open(
-                mac_address,
-                channel,
-                data_sender,
-                connection_status_sender,
-            )
+            NativeConnection::open(mac_address, channel, data_sender, connection_status_sender)
         })
         .await
         .expect("macOS RFCOMM open task panicked")

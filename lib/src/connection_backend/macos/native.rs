@@ -18,10 +18,7 @@ type DataCallback = unsafe extern "C" fn(*mut c_void, *const u8, usize);
 type DisconnectCallback = unsafe extern "C" fn(*mut c_void);
 
 unsafe extern "C" {
-    fn openscq30_macos_enumerate_devices(
-        callback: DeviceCallback,
-        context: *mut c_void,
-    ) -> c_int;
+    fn openscq30_macos_enumerate_devices(callback: DeviceCallback, context: *mut c_void) -> c_int;
     fn openscq30_macos_enumerate_services(
         address: *const c_char,
         callback: ServiceCallback,
@@ -89,10 +86,7 @@ pub struct NativeDevice {
 pub fn devices() -> Result<Vec<NativeDevice>, NativeError> {
     let mut devices = Vec::new();
     let status = unsafe {
-        openscq30_macos_enumerate_devices(
-            collect_device,
-            (&raw mut devices).cast::<c_void>(),
-        )
+        openscq30_macos_enumerate_devices(collect_device, (&raw mut devices).cast::<c_void>())
     };
     if status == 0 {
         Ok(devices)
@@ -107,7 +101,9 @@ unsafe extern "C" fn collect_device(
     address: *const c_char,
 ) {
     let devices = unsafe { &mut *context.cast::<Vec<NativeDevice>>() };
-    let name = unsafe { CStr::from_ptr(name) }.to_string_lossy().into_owned();
+    let name = unsafe { CStr::from_ptr(name) }
+        .to_string_lossy()
+        .into_owned();
     let address = unsafe { CStr::from_ptr(address) }.to_string_lossy();
     match address.parse() {
         Ok(mac_address) => devices.push(NativeDevice { name, mac_address }),
@@ -161,7 +157,9 @@ unsafe impl Sync for NativeConnection {}
 
 impl fmt::Debug for NativeConnection {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.debug_struct("NativeConnection").finish_non_exhaustive()
+        formatter
+            .debug_struct("NativeConnection")
+            .finish_non_exhaustive()
     }
 }
 
@@ -188,8 +186,8 @@ impl NativeConnection {
                 &raw mut status,
             )
         };
-        let handle = NonNull::new(handle)
-            .ok_or_else(|| NativeError::new("open RFCOMM channel", status))?;
+        let handle =
+            NonNull::new(handle).ok_or_else(|| NativeError::new("open RFCOMM channel", status))?;
         Ok(Self {
             handle,
             _callbacks: callbacks,
@@ -212,7 +210,10 @@ unsafe extern "C" fn receive_data(context: *mut c_void, data: *const u8, length:
     let callbacks = unsafe { &*context.cast::<CallbackContext>() };
     let packet = unsafe { std::slice::from_raw_parts(data, length) }.to_vec();
     if let Err(error) = callbacks.data_sender.try_send(packet) {
-        warn!(?error, "dropping RFCOMM packet because the receiver is unavailable");
+        warn!(
+            ?error,
+            "dropping RFCOMM packet because the receiver is unavailable"
+        );
     }
 }
 
@@ -236,8 +237,8 @@ mod tests {
     #[test]
     fn parses_standard_bluetooth_uuid_bytes() {
         let bytes = [
-            0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0x80, 0x5f,
-            0x9b, 0x34, 0xfb,
+            0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0x80, 0x5f, 0x9b,
+            0x34, 0xfb,
         ];
         assert_eq!(
             Uuid::from_slice(&bytes).unwrap(),
@@ -248,8 +249,8 @@ mod tests {
     #[test]
     fn parses_soundcore_vendor_uuid_bytes() {
         let bytes = [
-            0x0c, 0xf1, 0x2d, 0x31, 0xfa, 0xc3, 0x45, 0x53, 0xbd, 0x80, 0xd6, 0x83, 0x2e,
-            0x7b, 0x39, 0x57,
+            0x0c, 0xf1, 0x2d, 0x31, 0xfa, 0xc3, 0x45, 0x53, 0xbd, 0x80, 0xd6, 0x83, 0x2e, 0x7b,
+            0x39, 0x57,
         ];
         assert_eq!(
             Uuid::from_slice(&bytes).unwrap(),
