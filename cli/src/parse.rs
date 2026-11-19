@@ -102,15 +102,12 @@ fn parse_multi_select_with_remove(
             settings::MultiSelectWithRemoveCommand::Remove(rest.to_owned().into()),
         ))
     } else {
-        // To allow selecting profiles that start with a '+' or '-' without triggering the other
-        // branches, '\' can be used as a prefix that will be ignored.
+        // A leading '\' selects an option starting with '-' instead of removing it.
         let name = unparsed
             .strip_prefix("\\")
             .map(ToOwned::to_owned)
             .unwrap_or(unparsed);
-        Ok(primitives::one_of_options(&name, &setting.options)?
-            .clone()
-            .into())
+        parse_multi_select(setting, &name)
     }
 }
 
@@ -193,6 +190,48 @@ fn parse_time(unparsed: &str) -> anyhow::Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn multi_select_with_remove_selections() {
+        let setting = settings::Select {
+            options: ["First", "Second", "-prefixed", "has,comma"]
+                .map(Cow::Borrowed)
+                .to_vec(),
+            ..Default::default()
+        };
+        for (input, expected) in [
+            ("First", vec!["First"]),
+            ("first,SECOND", vec!["First", "Second"]),
+            ("", vec![]),
+            ("\\-prefixed", vec!["-prefixed"]),
+            ("\"has,comma\",First", vec!["has,comma", "First"]),
+        ] {
+            assert_eq!(
+                parse_multi_select_with_remove(&setting, input.to_owned()).unwrap(),
+                Value::StringVec(expected.into_iter().map(Cow::Borrowed).collect()),
+                "input: {input:?}",
+            );
+        }
+    }
+
+    #[test]
+    fn multi_select_with_remove_rejects_unknown_selection() {
+        let setting = settings::Select {
+            options: vec!["First".into()],
+            ..Default::default()
+        };
+        parse_multi_select_with_remove(&setting, "First,unknown".into()).unwrap_err();
+    }
+
+    #[test]
+    fn multi_select_with_remove_preserves_remove_command() {
+        assert_eq!(
+            parse_multi_select_with_remove(&settings::Select::default(), "-First".into()).unwrap(),
+            Value::MultiSelectWithRemoveCommand(settings::MultiSelectWithRemoveCommand::Remove(
+                "First".into()
+            ),),
+        );
+    }
 
     #[test]
     fn parse_time_12_hour_12_am() {

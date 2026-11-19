@@ -5,7 +5,7 @@ use tempfile::tempdir;
 
 fn cli(dir: &Path) -> Command {
     let mut cmd = Command::new(get_cargo_bin("openscq30"));
-    cmd.env("XDG_CONFIG_HOME", dir.to_str().unwrap());
+    cmd.env("OPENSCQ30_DATABASE_PATH", dir.join("database.sqlite"));
     cmd
 }
 

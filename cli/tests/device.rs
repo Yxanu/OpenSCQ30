@@ -5,7 +5,7 @@ use tempfile::tempdir;
 
 fn cli(dir: &Path) -> Command {
     let mut cmd = Command::new(get_cargo_bin("openscq30"));
-    cmd.env("XDG_CONFIG_HOME", dir.to_str().unwrap());
+    cmd.env("OPENSCQ30_DATABASE_PATH", dir.join("database.sqlite"));
     cmd
 }
 
@@ -970,6 +970,26 @@ fn setting_multi_select_with_remove() {
 
     ----- stderr -----
     ");
+}
+
+#[test]
+fn setting_multi_select_with_remove_select_devices() {
+    let dir = tempdir().unwrap();
+    add_device(dir.path(), "SoundcoreA3936");
+    for value in [
+        "00:00:00:00:00:01",
+        "00:00:00:00:00:00,00:00:00:00:00:01",
+        "",
+    ] {
+        let output = set_and_get(dir.path(), "dualConnectionsDevices", value)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "selection {value:?} failed: {}",
+            String::from_utf8_lossy(&output.stderr),
+        );
+    }
 }
 
 #[test]
